@@ -1,0 +1,91 @@
+# ==============================================================================
+# rtl.yml — GitHub Actions CI workflow
+#
+# Automatically compiles, simulates, runs the self-checking testbench,
+# and performs synthesis using open-source tools (Icarus Verilog + Yosys).
+# ==============================================================================
+
+name: RTL CI — Compile, Simulate, Synthesize
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  rtl-verify:
+    name: Compile + Simulate + Synthesize
+    runs-on: ubuntu-latest
+
+    steps:
+      # ------------------------------------------------------------------
+      # 1. Checkout repository
+      # ------------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ------------------------------------------------------------------
+      # 2. Install Icarus Verilog and Yosys
+      # ------------------------------------------------------------------
+      - name: Install Icarus Verilog and Yosys
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog yosys
+
+      # ------------------------------------------------------------------
+      # 3. Show tool versions
+      # ------------------------------------------------------------------
+      - name: Print tool versions
+        run: |
+          iverilog -V 2>&1 | head -3
+          yosys --version
+
+      # ------------------------------------------------------------------
+      # 4. Compile RTL and testbench
+      # ------------------------------------------------------------------
+      - name: Compile RTL + Testbench
+        run: |
+          mkdir -p simulation
+          iverilog -o simulation/sim.vvp \
+            -I tb \
+            rtl/sensor_monitor_core.v \
+            rtl/apb_sensor_monitor.v \
+            rtl/top_sensor_monitor.v \
+            tb/tb_sensor_monitor.v
+
+      # ------------------------------------------------------------------
+      # 5. Run simulation
+      # ------------------------------------------------------------------
+      - name: Run simulation
+        working-directory: simulation
+        run: |
+          vvp sim.vvp | tee sim_output.log
+          # Check for failures in the test summary
+          if grep -q "FAIL : 0" sim_output.log; then
+            echo "✅ All tests passed."
+          else
+            echo "❌ Some tests failed!"
+            exit 1
+          fi
+
+      # ------------------------------------------------------------------
+      # 6. Run Yosys synthesis
+      # ------------------------------------------------------------------
+      - name: Run Yosys synthesis
+        run: |
+          yosys -s synth/synth.ys 2>&1 | tee synth/synth.log
+
+      # ------------------------------------------------------------------
+      # 7. Upload simulation and synthesis artifacts
+      # ------------------------------------------------------------------
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: simulation-and-synthesis-logs
+          path: |
+            simulation/sim_output.log
+            simulation/sensor_monitor.vcd
+            synth/synth.log
+            synth/netlist.v

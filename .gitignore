@@ -1,0 +1,29 @@
+# ==== Simulation outputs ====
+*.vvp
+*.vcd
+simulation/sim.vvp
+simulation/sensor_monitor.vcd
+simulation/sim_output.log
+
+# ==== Yosys synthesis outputs ====
+synth/netlist.v
+synth/synth.log
+
+# ==== Private preparation (NEVER commit) ====
+_private_prep/
+
+# ==== OS files ====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==== Editor / IDE files ====
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# ==== Build artifacts ====
+*.o
+*.d

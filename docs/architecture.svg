@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 720" font-family="Segoe UI, Arial, sans-serif" font-size="12">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+    <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="720" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- Title -->
+  <text x="450" y="32" text-anchor="middle" font-size="16" font-weight="bold" fill="#1e293b">APB-Based Multi-Channel Sensor Monitor — Architecture</text>
+
+  <!-- ==================== APB Master ==================== -->
+  <rect x="340" y="50" width="220" height="44" rx="8" fill="url(#headerGrad)" stroke="#4f46e5"/>
+  <text x="450" y="77" text-anchor="middle" fill="#fff" font-weight="bold" font-size="14">APB Master / CPU</text>
+
+  <!-- Arrow down to APB Slave -->
+  <line x1="450" y1="94" x2="450" y2="130" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="460" y="117" font-size="10" fill="#64748b">PSEL, PENABLE, PWRITE, PADDR, PWDATA</text>
+
+  <!-- ==================== APB4 Slave Block ==================== -->
+  <rect x="100" y="130" width="700" height="210" rx="10" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="450" y="152" text-anchor="middle" font-weight="bold" fill="#4338ca" font-size="13">APB4 Slave — Register Interface  (apb_sensor_monitor.v)</text>
+  <text x="790" y="152" text-anchor="end" font-size="10" fill="#6366f1">PRDATA, PREADY, PSLVERR ↑</text>
+
+  <!-- Register boxes -->
+  <rect x="120" y="165" width="130" height="36" rx="5" fill="#fff" stroke="#a5b4fc"/>
+  <text x="185" y="180" text-anchor="middle" font-size="11" font-weight="bold" fill="#3730a3">CTRL_REG (0x00)</text>
+  <text x="185" y="194" text-anchor="middle" font-size="9" fill="#64748b">enable, signed_mode0/1</text>
+
+  <rect x="260" y="165" width="130" height="36" rx="5" fill="#fff" stroke="#a5b4fc"/>
+  <text x="325" y="180" text-anchor="middle" font-size="11" font-weight="bold" fill="#3730a3">THRESH0 (0x04)</text>
+  <text x="325" y="194" text-anchor="middle" font-size="9" fill="#64748b">threshold0[7:0]</text>
+
+  <rect x="400" y="165" width="130" height="36" rx="5" fill="#fff" stroke="#a5b4fc"/>
+  <text x="465" y="180" text-anchor="middle" font-size="11" font-weight="bold" fill="#3730a3">THRESH1 (0x08)</text>
+  <text x="465" y="194" text-anchor="middle" font-size="9" fill="#64748b">threshold1[7:0]</text>
+
+  <rect x="540" y="165" width="130" height="36" rx="5" fill="#fff" stroke="#a5b4fc"/>
+  <text x="605" y="180" text-anchor="middle" font-size="11" font-weight="bold" fill="#3730a3">ACK_REG (0x20)</text>
+  <text x="605" y="194" text-anchor="middle" font-size="9" fill="#64748b">ack0, ack1 (WO)</text>
+
+  <rect x="120" y="210" width="130" height="36" rx="5" fill="#f0fdf4" stroke="#86efac"/>
+  <text x="185" y="225" text-anchor="middle" font-size="11" font-weight="bold" fill="#166534">SENSOR0 (0x0C)</text>
+  <text x="185" y="239" text-anchor="middle" font-size="9" fill="#64748b">live sensor0 (RO)</text>
+
+  <rect x="260" y="210" width="130" height="36" rx="5" fill="#f0fdf4" stroke="#86efac"/>
+  <text x="325" y="225" text-anchor="middle" font-size="11" font-weight="bold" fill="#166534">SENSOR1 (0x10)</text>
+  <text x="325" y="239" text-anchor="middle" font-size="9" fill="#64748b">live sensor1 (RO)</text>
+
+  <rect x="400" y="210" width="130" height="36" rx="5" fill="#fef3c7" stroke="#fbbf24"/>
+  <text x="465" y="225" text-anchor="middle" font-size="11" font-weight="bold" fill="#92400e">STATUS (0x14)</text>
+  <text x="465" y="239" text-anchor="middle" font-size="9" fill="#64748b">alarm0/1, irq (RO)</text>
+
+  <rect x="540" y="210" width="130" height="36" rx="5" fill="#fef3c7" stroke="#fbbf24"/>
+  <text x="605" y="225" text-anchor="middle" font-size="11" font-weight="bold" fill="#92400e">FAULT0 (0x18)</text>
+  <text x="605" y="239" text-anchor="middle" font-size="9" fill="#64748b">fault_value0 (RO)</text>
+
+  <rect x="680" y="210" width="110" height="36" rx="5" fill="#fef3c7" stroke="#fbbf24"/>
+  <text x="735" y="225" text-anchor="middle" font-size="11" font-weight="bold" fill="#92400e">FAULT1 (0x1C)</text>
+  <text x="735" y="239" text-anchor="middle" font-size="9" fill="#64748b">fault_value1 (RO)</text>
+
+  <!-- Legend line -->
+  <text x="150" y="320" font-size="10" fill="#64748b">RW = Read/Write    RO = Read-Only    WO = Write-Only</text>
+
+  <!-- Arrow from APB to Core -->
+  <line x1="450" y1="340" x2="450" y2="380" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="460" y="365" font-size="10" fill="#64748b">enable, thresholds, signed_mode, ack</text>
+
+  <!-- ==================== Sensor Monitor Core ==================== -->
+  <rect x="100" y="380" width="700" height="230" rx="10" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+  <text x="450" y="402" text-anchor="middle" font-weight="bold" fill="#c2410c" font-size="13">Sensor Monitor Core  (sensor_monitor_core.v)</text>
+
+  <!-- Channel 0 comparator -->
+  <rect x="130" y="415" width="160" height="60" rx="6" fill="#fff" stroke="#fb923c"/>
+  <text x="210" y="435" text-anchor="middle" font-weight="bold" fill="#9a3412" font-size="11">Channel 0 Comparator</text>
+  <text x="210" y="450" text-anchor="middle" font-size="10" fill="#64748b">signed / unsigned</text>
+  <text x="210" y="465" text-anchor="middle" font-size="10" fill="#64748b">sensor0 ≥ threshold0 ?</text>
+
+  <!-- Channel 1 comparator -->
+  <rect x="610" y="415" width="160" height="60" rx="6" fill="#fff" stroke="#fb923c"/>
+  <text x="690" y="435" text-anchor="middle" font-weight="bold" fill="#9a3412" font-size="11">Channel 1 Comparator</text>
+  <text x="690" y="450" text-anchor="middle" font-size="10" fill="#64748b">signed / unsigned</text>
+  <text x="690" y="465" text-anchor="middle" font-size="10" fill="#64748b">sensor1 ≥ threshold1 ?</text>
+
+  <!-- FSM -->
+  <rect x="350" y="415" width="200" height="60" rx="6" fill="#ede9fe" stroke="#8b5cf6"/>
+  <text x="450" y="435" text-anchor="middle" font-weight="bold" fill="#5b21b6" font-size="11">FSM</text>
+  <text x="450" y="455" text-anchor="middle" font-size="10" fill="#64748b">IDLE → MONITOR → ALARM</text>
+  <text x="450" y="468" text-anchor="middle" font-size="9" fill="#7c3aed">state transitions on enable/violate/ack</text>
+
+  <!-- Arrows comparators → FSM -->
+  <line x1="290" y1="445" x2="350" y2="445" stroke="#334155" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="610" y1="445" x2="550" y2="445" stroke="#334155" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="310" y="440" font-size="9" fill="#64748b">violate0</text>
+  <text x="565" y="440" font-size="9" fill="#64748b">violate1</text>
+
+  <!-- Sticky Alarm Logic -->
+  <rect x="200" y="500" width="200" height="45" rx="6" fill="#fef2f2" stroke="#ef4444"/>
+  <text x="300" y="520" text-anchor="middle" font-weight="bold" fill="#991b1b" font-size="11">Sticky Alarm Logic</text>
+  <text x="300" y="535" text-anchor="middle" font-size="9" fill="#64748b">set on violation, cleared only by ACK</text>
+
+  <!-- Fault Capture Logic -->
+  <rect x="500" y="500" width="200" height="45" rx="6" fill="#fef2f2" stroke="#ef4444"/>
+  <text x="600" y="520" text-anchor="middle" font-weight="bold" fill="#991b1b" font-size="11">Fault Capture Logic</text>
+  <text x="600" y="535" text-anchor="middle" font-size="9" fill="#64748b">stores FIRST violating value</text>
+
+  <!-- Arrows FSM → alarm/fault -->
+  <line x1="400" y1="475" x2="300" y2="500" stroke="#334155" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="500" y1="475" x2="600" y2="500" stroke="#334155" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Sensor inputs from outside -->
+  <rect x="20" y="430" width="90" height="32" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="65" y="451" text-anchor="middle" font-weight="bold" fill="#1e40af" font-size="11">SENSOR0</text>
+  <line x1="110" y1="445" x2="130" y2="445" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="790" y="430" width="90" height="32" rx="6" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="835" y="451" text-anchor="middle" font-weight="bold" fill="#1e40af" font-size="11">SENSOR1</text>
+  <line x1="790" y1="445" x2="770" y2="445" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Arrow from Sticky to STATUS (upward feedback) -->
+  <line x1="250" y1="500" x2="250" y2="330" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+  <text x="210" y="360" font-size="9" fill="#ef4444">alarm0/1 → STATUS</text>
+
+  <!-- Arrow from Fault to FAULT regs (upward feedback) -->
+  <line x1="650" y1="500" x2="650" y2="330" stroke="#f97316" stroke-width="1" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+  <text x="660" y="360" font-size="9" fill="#f97316">fault → FAULT0/1</text>
+
+  <!-- ==================== IRQ Output ==================== -->
+  <line x1="300" y1="545" x2="300" y2="590" stroke="#334155" stroke-width="2"/>
+  <line x1="300" y1="590" x2="450" y2="590" stroke="#334155" stroke-width="2"/>
+  <line x1="450" y1="590" x2="450" y2="630" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="370" y="630" width="160" height="40" rx="8" fill="#dc2626" stroke="#991b1b"/>
+  <text x="450" y="655" text-anchor="middle" fill="#fff" font-weight="bold" font-size="14">IRQ Output</text>
+  <text x="450" y="618" text-anchor="middle" font-size="9" fill="#64748b">alarm0 | alarm1</text>
+
+  <!-- Top-level module label -->
+  <rect x="80" y="270" width="740" height="30" rx="5" fill="none" stroke="#94a3b8" stroke-dasharray="6,3"/>
+  <text x="450" y="290" text-anchor="middle" font-size="11" font-weight="bold" fill="#475569">top_sensor_monitor.v</text>
+
+  <!-- Footer -->
+  <text x="450" y="700" text-anchor="middle" font-size="10" fill="#94a3b8">APB-Based Multi-Channel Sensor Monitoring &amp; Fault Logger IP — Educational Project</text>
+</svg>

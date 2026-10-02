@@ -1,0 +1,38 @@
+# ==============================================================================
+# synth.ys — Yosys synthesis script for APB Sensor Monitor IP
+#
+# Targets generic gate library (no FPGA/ASIC vendor primitives).
+# Produces synthesized netlist and cell statistics.
+#
+# Usage:  yosys -s synth/synth.ys
+# ==============================================================================
+
+# Read Verilog source files
+read_verilog rtl/sensor_monitor_core.v
+read_verilog rtl/apb_sensor_monitor.v
+read_verilog rtl/top_sensor_monitor.v
+
+# Set top-level module
+hierarchy -top top_sensor_monitor
+
+# Technology-independent synthesis
+proc
+opt
+fsm
+opt
+memory
+opt
+techmap
+opt
+
+# Map to generic cell library
+synth -top top_sensor_monitor
+
+# Write synthesized netlist
+write_verilog -noattr synth/netlist.v
+
+# Print cell statistics
+stat
+
+# Print design check results
+check

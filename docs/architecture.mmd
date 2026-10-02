@@ -1,0 +1,55 @@
+graph TD
+    subgraph External
+        CPU["APB Master / CPU"]
+        S0["SENSOR_0 [7:0]"]
+        S1["SENSOR_1 [7:0]"]
+    end
+
+    subgraph top_sensor_monitor
+        subgraph APB["APB4 Slave — Register Interface<br/>(apb_sensor_monitor)"]
+            CTRL["CTRL_REG<br/>enable, signed_mode0/1"]
+            TH0["THRESH0_REG<br/>threshold0[7:0]"]
+            TH1["THRESH1_REG<br/>threshold1[7:0]"]
+            SNS0["SENSOR0_REG (RO)<br/>live sensor0"]
+            SNS1["SENSOR1_REG (RO)<br/>live sensor1"]
+            STAT["STATUS_REG (RO)<br/>alarm0, alarm1, irq"]
+            FLT0["FAULT0_REG (RO)<br/>fault_value0"]
+            FLT1["FAULT1_REG (RO)<br/>fault_value1"]
+            ACKREG["ACK_REG (WO)<br/>ack0, ack1"]
+        end
+
+        subgraph CORE["Sensor Monitor Core<br/>(sensor_monitor_core)"]
+            CMP0["Channel 0<br/>Comparator<br/>signed / unsigned"]
+            CMP1["Channel 1<br/>Comparator<br/>signed / unsigned"]
+            FSM["FSM<br/>IDLE → MONITOR → ALARM"]
+            STICKY["Sticky Alarm<br/>Logic"]
+            FCAP["Fault Capture<br/>Logic"]
+        end
+
+        IRQ_OUT["IRQ Output"]
+    end
+
+    CPU -->|"APB4 Bus<br/>PSEL, PENABLE, PWRITE,<br/>PADDR, PWDATA"| APB
+    APB -->|"PRDATA, PREADY,<br/>PSLVERR"| CPU
+
+    S0 --> SNS0
+    S1 --> SNS1
+    S0 --> CMP0
+    S1 --> CMP1
+
+    CTRL -->|"enable, signed_mode"| FSM
+    TH0 -->|"threshold0"| CMP0
+    TH1 -->|"threshold1"| CMP1
+    ACKREG -->|"ack0, ack1"| STICKY
+
+    CMP0 -->|"violate0"| FSM
+    CMP1 -->|"violate1"| FSM
+    FSM --> STICKY
+    CMP0 -->|"violate0"| FCAP
+    CMP1 -->|"violate1"| FCAP
+
+    STICKY -->|"alarm0"| STAT
+    STICKY -->|"alarm1"| STAT
+    FCAP -->|"fault_value0"| FLT0
+    FCAP -->|"fault_value1"| FLT1
+    STICKY -->|"alarm0 OR alarm1"| IRQ_OUT
